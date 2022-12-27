@@ -1,6 +1,7 @@
 
 import sys
 import time
+import bootstrap
 import zap_parser
 import redis_db as cloud_db
 
@@ -45,11 +46,7 @@ def test_cloud(urls=None):
     cloud_db.push_urls(urls)
     print('URLs are pushed to the cloud DB')
 
-    statistics = zap_parser.process_urls(urls)
-    print('Statistics from ZAP has been calculated')
-
-    cloud_db.push_data(statistics)
-    print('Statistics has been pushed to the cloud DB')
+    bootstrap.run_task()
 
 
 def test_all(urls=None):

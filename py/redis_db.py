@@ -14,7 +14,7 @@ url_db = 'url_list'
 data_db = 'zap_info'
 
 @dataclass
-class RedisDb:
+class CloudDb:
     username : str = username
     password : str = password
     host     : Any = endpoint
@@ -73,21 +73,33 @@ class RedisDb:
         jd = json.dumps(data)
         self.redis.hset(self.data_db, key, jd)
 
-    def add_data_list(self, data_list):
+    def push_data(self, data_list):
         for data in data_list:
             self.add_data(data)
+
+    def fetch_urls(self):
+        keys = list(self.redis.hgetall(self.url_db).keys())
+        urls = [k.decode() for k in keys]
+        return urls
 
 
 
 def push_urls(urls):
-    db = RedisDb()
+    db = CloudDb()
     db.connect()
     db.add_urls(urls)
     pass
 
 
 def push_data(data):
-    db = RedisDb()
+    db = CloudDb()
     db.connect()
-    db.add_data_list(data)
+    db.push_data(data)
     pass
+
+
+def fetch_urls():
+    db = CloudDb()
+    db.connect()
+    urls = db.fetch_urls()
+    return urls
